@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Happy Birthday, Andrew! 🎉</title>
+    <style>
+    :root {
+      --bg1: #0f1021;
+      --bg2: #1b1c3a;
+      --accent: #ffd166;
+      --accent2: #ef476f;
+      --box1: #7bdff2;
+      --box2: #4098d7;
+      --lid1: #ffd6a5;
+      --lid2: #ffad60;
+      --ribbon1: #ef476f;
+      --ribbon2: #f78da7;
+      --text: #f1f5f9;
+      --shadow: rgba(0,0,0,0.25);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: radial-gradient(1200px 600px at 70% 10%, var(--bg2), var(--bg1));
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      overflow: hidden;
+    }
+    header {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 2;
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: filter 0.8s ease;
+    }
+    header.blur-bg {
+      filter: blur(8px) brightness(0.3);
+    }
+    header h1 {
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      font-size: clamp(20px, 3.2vw, 42px);
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+    #canvas-wrap {
+      position: fixed;
+      inset: 0;
+      transition: filter 0.8s ease;
+    }
+    #canvas-wrap.blur-bg {
+      filter: blur(8px) brightness(0.3);
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    #reveal {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      text-decoration: none;
+      background: linear-gradient(135deg, #2a2d47, #1a1d35);
+      color: #ffffff;
+      padding: 40px 48px;
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.1);
+      opacity: 0;
+      pointer-events: none;
+      transition: all .8s cubic-bezier(.2,.8,.2,1);
+      z-index: 10;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      text-align: center;
+      min-width: 400px;
+      max-width: 500px;
+      box-shadow: 
+        0 24px 80px rgba(0,0,0,0.4),
+        0 8px 32px rgba(0,0,0,0.2),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    #reveal .book-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: block;
+    }
+    #reveal .button-title {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ff6b9d, #c44faf, #8b5fbf);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+    #reveal .button-subtitle {
+      font-size: 16px;
+      font-weight: 400;
+      margin-bottom: 24px;
+      opacity: 0.8;
+      line-height: 1.4;
+    }
+    #reveal .button-cta {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff8a9b, #ffa8cc);
+      color: #1a1a1a;
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(255, 138, 155, 0.3);
+      transition: all 0.3s ease;
+    }
+    #reveal .button-message {
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0.7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    #reveal.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+    #reveal:hover .button-cta {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(255, 138, 155, 0.4);
+      background: linear-gradient(135deg, #ff9bb0, #ffbbd6);
+    }
+    #hint {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(13px, 1.8vw, 16px);
+      font-weight: 500;
+      opacity: 0.9;
+      background: rgba(255,255,255,0.08);
+      padding: 10px 18px;
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 2;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: filter 0.8s ease, opacity 0.8s ease;
+    }
+    #hint.blur-bg {
+      filter: blur(8px) brightness(0.3);
+      opacity: 0.2;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+  </head>
+  <body>
+    <header>
+      <h1>Happy Birthday, Andrew! 🎂</h1>
+    </header>
+
+    <div id="canvas-wrap" aria-labelledby="title" role="application">
+      <canvas id="stage" aria-hidden="true"></canvas>
+      <div id="hint">Pull the ribbon to unwrap, then lift the lid</div>
+    </div>
+
+    <a id="reveal" target="_blank" rel="noopener"
+      href="YOUR_GOOGLE_SLIDES_LINK_HERE">
+      <span class="book-icon">📖</span>
+      <div class="button-title">Your Memory Book</div>
+      <div class="button-subtitle">Click below to view the memories we collected
+        for you.</div>
+      <div class="button-cta">Open the Memory Book</div>
+      <div class="button-message">With love, from all of us 💛</div>
+    </a>
+
+    <p id="title" class="sr-only">Interactive gift you can unwrap to reveal a
+      surprise link.</p>
+
+    <script>
+    (() => {
+      const canvas = document.getElementById('stage');
+      const ctx = canvas.getContext('2d');
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+      // Layout and animation state
+      let W = 0, H = 0, cx = 0, cy = 0;
+      let box = { w: 420, h: 260, lidH: 60, y: 0 };
+      let ribbon = { progress: 0, dragging: false, startX: 0, handleX: 0 };
+      let lid = { lift: 0, dragging: false, startY: 0, targetLift: 0, popped: false, fly: 0 };
+      let state = 'tied'; // 'tied' -> 'untied' -> 'open'
+      let confetti = [];
+      const CONFETTI_COLORS = ['#ff6fae','#ffce54','#4dd9ff','#a786ff','#7dffb3','#ffffff'];
+      let continuousConfetti = false;
+      let t = 0;
+      const revealBtn = document.getElementById('reveal');
+      const hint = document.getElementById('hint');
+      const canvasWrap = document.getElementById('canvas-wrap');
+      const header = document.querySelector('header');
+
+      function resize() {
+        W = canvas.width = Math.floor(window.innerWidth * dpr);
+        H = canvas.height = Math.floor(window.innerHeight * dpr);
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        cx = W / 2;
+        cy = H * 0.58;
+        const scale = Math.min(W / 900, H / 700);
+        box.w = 480 * scale;
+        box.h = 300 * scale;
+        box.lidH = Math.max(50 * scale, 40);
+        box.y = cy;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      function lerp(a, b, p) { return a + (b - a) * p; }
+      function easeOutCubic(x){ return 1 - Math.pow(1 - x, 3); }
+      function easeInOutQuad(x){ return x < 0.5 ? 2*x*x : 1 - Math.pow(-2*x + 2, 2)/2; }
+
+      function drawRoundedRect(x, y, w, h, r) {
+        const rr = Math.min(r, Math.abs(w)/2, Math.abs(h)/2);
+        ctx.beginPath();
+        ctx.moveTo(x + rr, y);
+        ctx.arcTo(x + w, y, x + w, y + h, rr);
+        ctx.arcTo(x + w, y + h, x, y + h, rr);
+        ctx.arcTo(x, y + h, x, y, rr);
+        ctx.arcTo(x, y, x + w, y, rr);
+        ctx.closePath();
+      }
+
+      function drawBox() {
+        const bw = box.w, bh = box.h, lidH = box.lidH;
+        const x = cx - bw/2, y = box.y - bh/2;
+        // Box Base
+        const grad = ctx.createLinearGradient(0, y, 0, y + bh);
+        grad.addColorStop(0, getVar('--box1'));
+        grad.addColorStop(1, getVar('--box2'));
+        ctx.fillStyle = grad;
+        drawRoundedRect(x, y + lidH, bw, bh - lidH, Math.max(18 * dpr, 12));
+        ctx.fill();
+        // Ribbon vertical (animates with progress)
+        const ribW = Math.max(16 * dpr, bw * 0.06);
+        ctx.save();
+        ctx.globalAlpha = (state === 'tied') ? 1 : 1 - easeOutCubic(ribbon.progress);
+        const rgrad = ctx.createLinearGradient(x + bw/2, y, x + bw/2, y + bh);
+        rgrad.addColorStop(0, getVar('--ribbon1'));
+        rgrad.addColorStop(1, getVar('--ribbon2'));
+        ctx.fillStyle = rgrad;
+        drawRoundedRect(x + bw/2 - ribW/2, y + lidH, ribW, bh - lidH, ribW/2);
+        ctx.fill();
+        ctx.restore();
+
+        // Lid
+        const lift = lid.lift;
+        const lidY = y - lift;
+        const lgrad = ctx.createLinearGradient(0, lidY, 0, lidY + lidH);
+        lgrad.addColorStop(0, getVar('--lid1'));
+        lgrad.addColorStop(1, getVar('--lid2'));
+        ctx.fillStyle = lgrad;
+        ctx.save();
+        let fly = lid.fly;
+        if (state === 'open') {
+          // Lid drifts aside after pop: rotate slightly
+          ctx.translate(cx + bw*0.38 + fly * bw*0.15, lidY + lidH/2 - fly*lidH*0.4);
+          ctx.rotate((-0.3 + fly * 0.15));
+          drawRoundedRect(-bw/2.2, -lidH/2, bw*0.58, lidH, Math.max(18 * dpr, 12));
+          ctx.fill();
+        } else {
+          drawRoundedRect(x, lidY, bw, lidH, Math.max(18 * dpr, 12));
+          ctx.fill();
+        }
+        ctx.restore();
+
+        // Ribbon knot + horizontal strap + pull tab (only when tied)
+        if (state === 'tied') {
+          const knotY = lidY + lidH/2;
+          const knotX = cx;
+          // Horizontal strap
+          ctx.save();
+          ctx.globalAlpha = (1 - easeOutCubic(ribbon.progress));
+          drawRoundedRect(x, knotY - ribW/2, bw, ribW, ribW/2);
+          ctx.fillStyle = rgrad;
+          ctx.fill();
+          ctx.restore();
+          // Knot
+          ctx.save();
+          const knotAlpha = 1 - easeOutCubic(ribbon.progress);
+          ctx.globalAlpha = knotAlpha;
+          ctx.fillStyle = getVar('--ribbon1');
+          ctx.beginPath();
+          ctx.ellipse(knotX, knotY, ribW*0.7, ribW*0.5, 0, 0, Math.PI*2);
+          ctx.fill();
+          // Pull tab (right tail)
+          const pullBaseX = knotX + ribW*1.1 + ribbon.handleX;
+          const pullBaseY = knotY;
+          ctx.beginPath();
+          ctx.moveTo(pullBaseX, pullBaseY - ribW*0.35);
+          ctx.lineTo(pullBaseX + ribW*1.6, pullBaseY);
+          ctx.lineTo(pullBaseX, pullBaseY + ribW*0.35);
+          ctx.closePath();
+          ctx.fillStyle = getVar('--ribbon2');
+          ctx.fill();
+          // Little text hint arrow
+          ctx.font = 14 * dpr + "px ui-sans-serif, system-ui";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "rgba(255,255,255,0.85)";
+          ctx.fillText("pull →", pullBaseX + ribW*1.8, pullBaseY);
+          ctx.restore();
+        }
+
+        // Inside message when opened
+        if (state === 'open') {
+          const msg = "Happy Birthday, Andrew!";
+          ctx.save();
+          ctx.fillStyle = "rgba(255,255,255,0.95)";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.font = Math.max(18 * dpr, bw * 0.05) + "px ui-sans-serif, system-ui";
+          ctx.fillText(msg, cx, y + lidH + (bh - lidH) * 0.35);
+          ctx.restore();
+        }
+      }
+
+      function getVar(name) {
+        const s = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return s || '#fff';
+      }
+
+      function emitConfetti(count, spreadFactor = 0.8) { // new improved emitter
+        const bw = box.w, bh = box.h, lidH = box.lidH;
+        const originX = cx;
+        const originY = box.y - bh/2 + lidH + 10 * dpr;
+        for (let i=0;i<count;i++) {
+          const angle = (Math.random()*Math.PI - Math.PI/2);
+          const speed = (Math.random()*4 + 3) * dpr;
+          confetti.push({
+            x: originX + (Math.random()-0.5)*bw*spreadFactor,
+            y: originY + (Math.random()-0.5)*20,
+            vx: Math.cos(angle)*speed,
+            vy: -Math.abs(Math.sin(angle))*speed - 3*dpr,
+            g: 0.18 * dpr,
+            r: Math.random()*Math.PI*2,
+            vr: (Math.random()-0.5)*0.25,
+            s: (Math.random()*4 + 6) * dpr,
+            shape: (Math.random()<0.33?'circle':(Math.random()<0.5?'square':'triangle')),
+            c: CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)],
+            life: 300 + Math.random()*240
+          });
+        }
+      }
+      function drawConfetti() {
+        confetti.forEach(p => {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+            ctx.rotate(p.r);
+            ctx.fillStyle = p.c;
+            switch(p.shape){
+              case 'circle':
+                ctx.beginPath();
+                ctx.arc(0,0,p.s*0.5,0,Math.PI*2);
+                ctx.fill();
+                break;
+              case 'triangle':
+                ctx.beginPath();
+                ctx.moveTo(0,-p.s*0.6);
+                ctx.lineTo(p.s*0.6,p.s*0.6);
+                ctx.lineTo(-p.s*0.6,p.s*0.6);
+                ctx.closePath();
+                ctx.fill();
+                break;
+              default: // square
+                ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s);
+            }
+          ctx.restore();
+        });
+      }
+
+      function step() {
+        t++;
+        ctx.clearRect(0, 0, W, H);
+
+        // Soft vignette background sparkles
+        for (let i = 0; i < 60; i++) {
+          const a = (Math.sin((t*0.003 + i)*1.7) * 0.5 + 0.5) * 0.4 + 0.1;
+          ctx.fillStyle = "rgba(255,255,255," + a + ")";
+          const x = (i * 127.3 % W), y = (i * 223.7 % H);
+          ctx.fillRect(x, y, 2 * dpr, 2 * dpr);
+        }
+
+        // Ease lid fly when opened
+        if (state === 'open') {
+          lid.fly = Math.min(1, lid.fly + 0.01);
+          continuousConfetti = true;
+        }
+        if (continuousConfetti && t % 2 === 0 && confetti.length < 1200) {
+          emitConfetti(14, 1);
+        }
+        // Update confetti physics (enhanced)
+        for (let i = confetti.length - 1; i >= 0; i--) {
+          const p = confetti[i];
+          p.vy += p.g;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.r += p.vr;
+          if (--p.life <= 0 || p.y > H + 100*dpr) confetti.splice(i,1);
+        }
+
+        drawBox();
+        drawConfetti();
+        requestAnimationFrame(step);
+      }
+      step();
+
+      // Interaction
+      const pointer = { x: 0, y: 0, down: false };
+      const wrap = document.getElementById('canvas-wrap');
+
+      function pt(e) {
+        if (e.touches && e.touches.length) {
+          pointer.x = e.touches[0].clientX * dpr;
+          pointer.y = e.touches[0].clientY * dpr;
+        } else {
+          pointer.x = e.clientX * dpr;
+          pointer.y = e.clientY * dpr;
+        }
+      }
+
+      wrap.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        pt(e);
+        pointer.down = true;
+        const bw = box.w, bh = box.h, lidH = box.lidH;
+        const x = cx - bw/2, y = box.y - bh/2;
+        // Hit test ribbon pull tab
+        if (state === 'tied') {
+          const ribW = Math.max(16 * dpr, bw * 0.06);
+          const knotY = y - lid.lift + lidH/2;
+          const knotX = cx;
+          const pullBaseX = knotX + ribW*1.1 + ribbon.handleX;
+          const pullBaseY = knotY;
+          const dx = pointer.x - (pullBaseX + ribW*0.8);
+          const dy = pointer.y - pullBaseY;
+          if (dx > -ribW && dx < ribW*3 && Math.abs(dy) < ribW*1.2) {
+            ribbon.dragging = true;
+            ribbon.startX = pointer.x;
+            hint.innerText = "Keep pulling…";
+          }
+        } else if (state === 'untied') {
+          // Hit test lid rectangle
+          const lidX = x, lidY = y - lid.lift;
+          if (pointer.x > lidX && pointer.x < lidX + bw && pointer.y > lidY && pointer.y < lidY + lidH) {
+            lid.dragging = true;
+            lid.startY = pointer.y + lid.lift;
+            hint.innerText = "Lift it up…";
+          }
+        }
+      }, { passive: false });
+
+      window.addEventListener('pointermove', (e) => {
+        pt(e);
+        if (ribbon.dragging && state === 'tied') {
+          const dx = Math.max(0, pointer.x - ribbon.startX);
+          const bw = box.w;
+          const need = Math.max(bw * 0.35, 140 * dpr);
+          ribbon.progress = Math.min(1, dx / need);
+          ribbon.handleX = dx;
+          if (ribbon.progress >= 1) {
+            ribbon.dragging = false;
+            state = 'untied';
+            hint.innerText = "Now lift the lid";
+            // Smoothly fade the ribbon elements over time
+            const start = performance.now();
+            const anim = () => {
+              const p = Math.min(1, (performance.now() - start) / 600);
+              ribbon.progress = p;
+              if (p < 1) requestAnimationFrame(anim);
+            };
+            requestAnimationFrame(anim);
+          }
+        } else if (lid.dragging && state === 'untied') {
+          lid.lift = Math.max(0, lid.startY - pointer.y);
+          // If lifted enough, pop the lid and open
+          const thresh = Math.max(110 * dpr, box.lidH * 1.6);
+          if (lid.lift > thresh) {
+            lid.dragging = false;
+            openBox();
+          }
+        }
+      }, { passive: true });
+
+      window.addEventListener('pointerup', () => {
+        pointer.down = false;
+        if (ribbon.dragging) {
+          // Snap back if not enough
+          ribbon.dragging = false;
+          if (state === 'tied') {
+            ribbon.progress *= 0.5;
+            ribbon.handleX *= 0.5;
+            hint.innerText = "Pull the ribbon to unwrap";
+          }
+        }
+        if (lid.dragging) {
+          lid.dragging = false;
+          if (state === 'untied') hint.innerText = "Grab the lid and lift";
+        }
+      });
+
+      function openBox() {
+        // Pop animation for lid
+        const startLift = lid.lift;
+        const duration = 650;
+        const start = performance.now();
+        const popAnim = () => {
+          const p = Math.min(1, (performance.now() - start) / duration);
+          const e = easeOutCubic(p);
+          lid.lift = lerp(startLift, Math.max(startLift, box.h * 0.9), e);
+          if (p < 1) {
+            requestAnimationFrame(popAnim);
+          } else {
+            state = 'open';
+            lid.popped = true;
+            lid.fly = 0;
+            emitConfetti(260, 1); // initial burst
+            hint.innerText = "Surprise!";
+            revealBtn.classList.add('show');
+            // Blur background elements
+            canvasWrap.classList.add('blur-bg');
+            header.classList.add('blur-bg');
+            hint.classList.add('blur-bg');
+          }
+        };
+        popAnim();
+      }
+
+      // Accessibility helpers
+      window.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() === 'r') {
+          reset();
+        } else if (e.key.toLowerCase() === 'l' && state === 'open') {
+          revealBtn.click();
+        } else if (state === 'tied' && (e.key === 'ArrowRight' || e.key === ' ')) {
+          ribbon.progress = Math.min(1, ribbon.progress + 0.2);
+          ribbon.handleX += box.w * 0.08;
+          if (ribbon.progress >= 1) {
+            state = 'untied';
+            hint.innerText = "Now lift the lid";
+          }
+        } else if (state === 'untied' && (e.key === 'ArrowUp' || e.key === ' ')) {
+          lid.lift += box.h * 0.12;
+          if (lid.lift > Math.max(110 * dpr, box.lidH * 1.6)) openBox();
+        }
+      });
+
+      function reset() {
+        ribbon.progress = 0;
+        ribbon.dragging = false;
+        ribbon.handleX = 0;
+        lid.lift = 0;
+        lid.dragging = false;
+        lid.popped = false;
+        lid.fly = 0;
+        state = 'tied';
+        confetti.length = 0;
+        revealBtn.classList.remove('show');
+        // Remove blur from background elements
+        canvasWrap.classList.remove('blur-bg');
+        header.classList.remove('blur-bg');
+        hint.classList.remove('blur-bg');
+        hint.innerText = "Pull the ribbon to unwrap, then lift the lid";
+      }
+
+      // In case the window regains focus and sizes changed
+      window.addEventListener('orientationchange', () => setTimeout(resize, 200));
+      window.addEventListener('resize', () => setTimeout(resize, 200));
+    })();
+    </script>
+  </body>
+</html>
